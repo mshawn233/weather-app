@@ -56,7 +56,7 @@ export default class Weather extends Component<Props, State> {
         };
     }
 
-    getCurrentWeather = (zipCode: number, event: any) => {
+    getCurrentWeather = (zipCode: number) => {
         fetch(`${API}?zip=${zipCode},us&appId=${API_KEY}`)
             .then(response => response.json())
             .then(data => {

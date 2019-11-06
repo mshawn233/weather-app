@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 function LocationForm(props: any) {
     
     const [zipcode, setZipcode] = useState('')
