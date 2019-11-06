@@ -1,23 +1,25 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 
-class LocationForm extends Component {
+function LocationForm(props: any) {
+    
+    const [zipcode, setZipcode] = useState('')
 
-    constructor(props) {
-        super(props);
-    }
+    const handleChange = (event: any) => {
+        setZipcode(event.target.value);
+        // console.log(zipcode);
+        // console.log('Here');
+    };
 
-    render() {
-        return <>
-            <form onSubmit={}>
-                <label>
-                    Please give a zipcode below:
-                </label>
-                <input type='text' />
-            </form>
-        </>
-    }
-
+    return <>
+        <form onSubmit={props.currentWeather(zipcode)}>
+            <label>
+                Please enter a zipcode:
+                <input type='text' value={zipcode} onChange={handleChange} />
+            </label>
+            <input type='submit' value='Submit' />
+        </form>
+    </>
 }
 
 export default LocationForm;

@@ -2,43 +2,81 @@ import React, { Component } from 'react';
 import { autobind } from 'core-decorators';
 
 import { API, API_KEY} from '../config';
-import { WeatherData } from '../types';
-import WeatherDisplay from './WeatherDisplay';
+import LocationForm from './LocationForm';
+// import WeatherDisplay from './WeatherDisplay';
 
-const loader = require('../assets/loader.svg');
+interface Props {}
 
 interface State {
-    loading: boolean,
-    weatherData?: WeatherData
+    formSubmitted: boolean,
+    weatherData?: {
+        coord: {
+            lon: string,
+            lat: string
+        },
+        weather: [
+            {
+                main: string,
+                description: string
+            }
+        ],
+        main: {
+            temp: number
+        },
+        wind: {
+            speed: number
+        }
+    }
 }
 
 @autobind
-export default class Weather extends Component<any, State> {
-    constructor(props) {
+export default class Weather extends Component<Props, State> {
+    constructor(props: any) {
         super(props);
         this.state = {
-            loading: true,
-            weatherData: undefined
+            formSubmitted: false,
+            weatherData: {
+                coord: {
+                    lon: '',
+                    lat: ''
+                },
+                weather: [
+                    {
+                        main: '',
+                        description: ''
+                    }
+                ],
+                main: {
+                    temp: 0
+                },
+                wind: {
+                    speed: 0
+                }
+            }
         };
     }
 
-    getCurrentWeather = (zipCode: number) => {
+    getCurrentWeather = (zipCode: number, event: any) => {
         fetch(`${API}?zip=${zipCode},us&appId=${API_KEY}`)
             .then(response => response.json())
             .then(data => {
-                const {
-                    coord,
-                    weather,
-                    main,
-                    wind
-                } = data;
                 const weatherData = {
-                    coord,
-                    weather,
-                    main,
-                    wind
+                    coord: data.coord,
+                    weather: [
+                        {
+                            main: data.weather[0].main,
+                            description: data.weather[0].description
+                        }
+                    ],
+                    main: {
+                        temp: data.main.temp
+                    },
+                    wind: {
+                        speed: data.wind.speed
+                    }
                 };
-                this.setState({ loading: false, weatherData });
+                this.setState({ formSubmitted: false, ...weatherData });
+                console.log(data);
             })
             .catch(error => console.error(error));
     }
@@ -46,8 +84,16 @@ export default class Weather extends Component<any, State> {
     render() {
 
         return <>
-            <WeatherDisplay weatherData={this.state.weatherData} />
+            {   
+                !this.state.formSubmitted &&
+                <LocationForm currentWeather={this.getCurrentWeather} />
+            }
+            {
+                /* this.state.formSubmitted &&
+                 <WeatherDisplay weatherData={this.state.weatherData} /> */
+            }
         </>
+
     }
     
 }
